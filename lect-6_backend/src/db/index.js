@@ -1,7 +1,13 @@
 import mongoose from "mongoose"
 import { DB_NAME } from "../constants.js"
-require('dotenv').config();
+import dotenv from "dotenv"
+import express from "express"
 
+
+
+dotenv.config({path:'./env'});
+
+const app=express();
 
 
 
