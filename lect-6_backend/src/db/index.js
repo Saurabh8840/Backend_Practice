@@ -5,11 +5,12 @@ import express from "express"
 
 
 
-dotenv.config({path:'./env'});
+dotenv.config({path:'./.env'});
 
 const app=express();
 
 
+// console.log("BHAI STRING ",process.env.MONGODB_URI);
 
 const connectDB=async()=>{
     try{
