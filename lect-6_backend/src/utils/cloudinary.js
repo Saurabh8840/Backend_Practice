@@ -1,9 +1,11 @@
 import {v2} from "cloudinary"
+import dotenv from "dotenv"
+dotenv.config()
 //filesystem
 //read write remove when need to manage file use filesystem
 import fs from "fs"
 
-cloudinary.config({ 
+v2.config({ 
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
         api_key: process.env.CLOUDINARY_API_KEY, 
         api_secret: process.env.CLOUDINARY_API_SECRET // Click 'View API Keys' above to copy your API secret
@@ -29,4 +31,4 @@ const uploadOnCloudinary= async(localFilePath)=>{
     }
 }
 
-export{uploadOnCloudinary}
+export {uploadOnCloudinary}
