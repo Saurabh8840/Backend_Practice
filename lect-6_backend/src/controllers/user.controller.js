@@ -4,6 +4,7 @@ import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { cover } from "three/src/extras/TextureUtils.js";
+import jwt from "jsonwebtoken"
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
@@ -162,7 +163,8 @@ const loginUser=asyncHandler(async(req,res)=>{
     //token generation ye kaam kai baar krna hai iss liye ise ek method me 
     //daal dete hai dost generateAccessAndRefreshToekns
 
-     generateAccessAndRefreshTokens(user._id)
+     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+
     
 
      //cookies me bejo info
@@ -230,6 +232,17 @@ const logoutUser=asyncHandler(async(req,res)=>{
         .json(new ApiResponse(200,{},"User logges Out"))
 })
 
+
+const refreshAccessToken=asyncHandler(async (req,res)=>{
+
+    const incomingrefreshToken=req.cookies.refreshToken||req.body.refreshToken
+
+    if(incomingrefreshToken){
+        throw new ApiError(401,"unauthorized request")
+    }
+
+
+})
 
 export { registerUser ,
     loginUser,
