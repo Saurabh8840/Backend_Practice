@@ -23,6 +23,8 @@ const generateAccessAndRefreshTokens = async (userId) => {
     }
 }
 
+
+
 const registerUser = asyncHandler(async (req, res) => {
   //get user details from frontend
   //validation - not empty
@@ -132,7 +134,7 @@ const loginUser=asyncHandler(async(req,res)=>{
     const {username,email,password}=req.body;
 
     //username or email existed
-    if(!username &&!email){
+    if(!username && !email){
         throw new ApiError(400,"username or password is required")
     }
 
@@ -142,6 +144,8 @@ const loginUser=asyncHandler(async(req,res)=>{
 
     }
 
+     
+     
     //is already exist then find user name or email 
     const user=await User.findOne({
         $or: [{username},{email}]
@@ -191,13 +195,11 @@ const loginUser=asyncHandler(async(req,res)=>{
                 "user logged in successfully"
             )
         )
+  
 
 
 
 })
-
-
-
 
 
 
@@ -233,13 +235,23 @@ const logoutUser=asyncHandler(async(req,res)=>{
 })
 
 
+
+
+
+
+
 const refreshAccessToken=asyncHandler(async (req,res)=>{
 
     const incomingrefreshToken=req.cookies.refreshToken||req.body.refreshToken
 
-    if(incomingrefreshToken){
+    if(!incomingrefreshToken){
         throw new ApiError(401,"unauthorized request")
     }
+
+    jwt.verify(
+        incomingrefreshToken,
+        process.env.REFRESH_TOKEN_SECRET
+    )
 
 
 })
