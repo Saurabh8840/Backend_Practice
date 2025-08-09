@@ -373,6 +373,9 @@ const updateUserAvatar=asyncHandler(async(req,res)=>{
 
     }
 
+    //Todo delete old image - assignment delete old image..
+    
+
 
     const user=await User.findByIdAndUpdate(
       req.user?._id,
@@ -388,6 +391,38 @@ const updateUserAvatar=asyncHandler(async(req,res)=>{
       new ApiResponse(200,user,"updated avatarimage")
     )
 })
+
+// const updateUserCoverImage=asyncHandler(async(req,res)=>{
+
+//     const coverImageLocalPath=req.file?.path
+
+//     if(!coverImageLocalPath){
+//       throw new ApiError(400,"avatar file is missing ")
+//     }
+
+//     const coverImage=await uploadOnCloudinary(coverImageLocalPath)
+
+//     if(!coverImage.url){
+//       throw new ApiError(400,"Error while uploading on cover Image ")
+
+
+//     }
+
+
+//     const user=await User.findByIdAndUpdate(
+//       req.user?._id,
+//       { $set:{
+//         avatar:avatar.url
+//       }},
+//       {new:true}
+//     ).select("-password")
+
+//     return res
+//     .status(200)
+//     .json(
+//       new ApiResponse(200,user,"updated coverimage")
+//     )
+// })
 
 const updateUserCoverImage=asyncHandler(async(req,res)=>{
 
@@ -420,6 +455,9 @@ const updateUserCoverImage=asyncHandler(async(req,res)=>{
       new ApiResponse(200,user,"updated coverimage")
     )
 })
+
+
+
 
 
 
