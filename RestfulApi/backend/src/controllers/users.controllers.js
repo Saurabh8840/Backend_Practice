@@ -8,7 +8,7 @@ export const getUser=async(req,res)=>{
 
 //new user 
 export const newUser=async(req,res)=>{
-
+    
     const {Name,email,age}=req.body;
 
     const newUser=await User.create({
