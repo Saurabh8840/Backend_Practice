@@ -2,6 +2,7 @@ import express from "express"
 import userRouter from "./routes/user.route.js"
 
 
+
 const app=express();
 
 //middleware
@@ -12,4 +13,13 @@ app.use(express.json());
 //route
 app.use("/api/users", userRouter)
 
+export {app}
 
+// import express from "express"
+// import userRouter from "./routes/user.route.js";
+
+// const app=express();
+
+// app.use(express.json())
+
+// app.use("/api/user",userRouter)
