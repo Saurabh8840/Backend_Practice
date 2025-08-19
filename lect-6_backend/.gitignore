@@ -1,0 +1,4 @@
+//all file which we don not have to push on github will be paste here 
+node_modules/
+.env
+
