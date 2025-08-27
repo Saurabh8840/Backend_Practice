@@ -47,6 +47,10 @@ app.get('/', (req, res) => {
   res.send('hello world');
 });
 
+// app.get('/twitter', (req, res) => {
+//   res.send('it is a twitter');
+// });
+
 app.get('/twitter', (req, res) => {
   res.send('it is a twitter');
 });
