@@ -1,8 +1,10 @@
 //
 // what is did 
 
-//commands
-//npm init -y  backend setup 
+// commands
+// npm init -y  backend setup 
+
+// postgresql://neondb_owner:npg_rKOfUAF6wzC1@ep-cool-tree-a1gnrd5o-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 
 //npm install prisma typescript ts-node @types/node --save-dev
 
