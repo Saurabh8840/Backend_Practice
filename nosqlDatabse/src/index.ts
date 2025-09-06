@@ -267,11 +267,17 @@
 //deletion of data
 
 //creating a table
+import dotenv from "dotenv";
+import { Client } from "pg";
 
-const { Client } = require("pg");
-const client = new Client({
-  connectionString: "postgresql://neondb_owner:npg_rKOfUAF6wzC1@ep-cool-tree-a1gnrd5o-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
+
+dotenv.config({path:'../.env'})
+
+const client:Client = new Client({
+  connectionString: process.env.Database_url
 });
+
+
 
 async function createTable() {
   try {
@@ -373,6 +379,7 @@ async function  createAddTable() {
                     pincode VARCHAR(20),
                     FOREIGN KEY (user_id) REFERENCES userDetail(id) ON DELETE CASCADE
                     )`;
+                    //cascade help in maintain consistency bcz when i delete user it also delete realted table to user in other table .like akriti name delted the her address will also be deleted
         const res=await client.query(query);
         console.log("created add table ",res);
     } catch (error) {
@@ -394,6 +401,46 @@ async function insertAddTable(p0:number,p1:string,p2:string,p3:string){
     
 }
 
+//transaction
+async function  insertUserAndAddress(
+  username:string,
+  password:string,
+  firstname:string,
+  lastname:string,
+  state:string,
+  country:string,
+  pincode:string
+) {
+
+  try {
+    await client.query('BEGIN')
+
+    const query=`INSERT INTO userDetail(username,password,firstname,lastname)
+                 VALUES($1,$2,$3,$4)
+                 RETURNING id `;
+    const value=[username,password,firstname,lastname]
+    const res=await client.query(query,value);
+    const user_id=res.rows[0].id;
+    console.log("inserted in users",res);
+
+
+    const querys=`INSERT INTO Address(user_id,state,country,pincode)VALUES($1,$2,$3,$4)`;
+    const values=[user_id,state,country,pincode]
+    const addRes=await client.query(querys,values);
+    console.log("inserted into add: ",addRes);
+
+    await client.query('COMMIT');
+  
+  } catch (error) {
+    await client.query(`ROLLBACK`); //roll back all transcation on error
+    console.error('Error during transaction,rolled back',error);
+    throw error;
+  }
+
+  
+  
+}
+
 async function main(){
    await client.connect();
 //    await createTable();
@@ -402,14 +449,20 @@ async function main(){
 //    await selectTable();
 //    await insertTable("annu_irt", "123456", "ann", "tripathi");
 //    await insertTable("sakshi_irt", "123456", "sakshi", "tripathi");
-//    await selectTable();
+//    await selectTable();m
 //    await deleteTable(3);
-   await selectTable();
+  //  await selectTable();
 //    await createAddTable();
 //    await insertAddTable(2,"uttarpradesh","India","273016");
 //    await insertAddTable(1,"madhyapradesh","India","273016");
+      
+      // Transactions 
+    //  await  insertUserAndAddress("papa_irt","123456","papaji","tripathi","goa","India","273016");
+     await selectTable();
    await client.end();
    
 }
 
 main().catch(console.error);
+
+//transaction run for happens multiple query together if one fails all will fail
