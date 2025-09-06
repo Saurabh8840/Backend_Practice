@@ -422,7 +422,7 @@ async function  insertUserAndAddress(
     const res=await client.query(query,value);
     const user_id=res.rows[0].id;
     console.log("inserted in users",res);
-
+    
 
     const querys=`INSERT INTO Address(user_id,state,country,pincode)VALUES($1,$2,$3,$4)`;
     const values=[user_id,state,country,pincode]
@@ -441,6 +441,51 @@ async function  insertUserAndAddress(
   
 }
 
+//join implemented 
+async function selectUserAndAddress() {
+  
+
+   try {
+    //selected rows only
+
+    // const query=`SELECT userDetail.username,userDetail.firstname,Address.state,Address.country,Address.pincode
+    //             FROM userDetail 
+    //             JOIN Address  ON userDetail.id=Address.user_id
+    //             WHERE userDetail.id=$1`;
+
+    //al rows and columen of both table
+
+
+    const query=`SELECT 
+         u.id AS user_id,
+         u.username,
+         u.password,
+         u.firstname,
+         u.lastname,
+         u.created_at,
+         a.id AS address_id,
+         a.state,
+         a.country,
+         a.pincode
+      FROM userDetail u
+      LEFT JOIN Address a
+      ON u.id=a.user_id
+
+    `;
+ 
+  //  const value=[userid];
+   const res=await client.query(query)
+   console.log("selected join query",res.rows);
+   return res.rows;
+   } catch (error) {
+    console.error("error while join",error);
+    throw error ;
+   }
+
+
+}
+
+
 async function main(){
    await client.connect();
 //    await createTable();
@@ -458,11 +503,40 @@ async function main(){
       
       // Transactions 
     //  await  insertUserAndAddress("papa_irt","123456","papaji","tripathi","goa","India","273016");
-     await selectTable();
-   await client.end();
+    //  await selectTable();
+
+    //relationships
+
+     await selectUserAndAddress();
+    //  await selectUserAndAddress(1);
+     await client.end();
    
 }
 
 main().catch(console.error);
 
 //transaction run for happens multiple query together if one fails all will fail
+
+
+
+//practice
+
+//try to fetch users details and address 
+
+//SELECT ID,USERNAME,EMAIL FROM users WHERE id=YOUR_USER_ID;
+
+//SELECT CITY,STATE FROM address WHERE user_id=your user id ;
+
+
+
+//method-2 using joins
+
+// SELECT user.id,users.username,address.city,address.country,address.street
+ // FROM users
+// JOIN address ON user.id=address.user_id
+// WHERE users.id='1';
+
+ //SELECT userDetail.username,userDetail.firstname,Address.state,Address.pincode
+  // FROM userDetail 
+  // JOIN Address ON a userDetail.id=address.user_id
+  // WHERE userDetail.id=your id 
