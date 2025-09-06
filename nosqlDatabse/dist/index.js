@@ -11,6 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 ///creating a simple nodejs app
 //npm init -y
 //npx tsc --init
@@ -209,9 +213,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //updationn
 //deletion of data
 //creating a table
-const { Client } = require("pg");
-const client = new Client({
-    connectionString: "postgresql://neondb_owner:npg_rKOfUAF6wzC1@ep-cool-tree-a1gnrd5o-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
+const dotenv_1 = __importDefault(require("dotenv"));
+const pg_1 = require("pg");
+dotenv_1.default.config({ path: '../.env' });
+const client = new pg_1.Client({
+    connectionString: process.env.Database_url
 });
 function createTable() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -300,6 +306,7 @@ function createAddTable() {
                     pincode VARCHAR(20),
                     FOREIGN KEY (user_id) REFERENCES userDetail(id) ON DELETE CASCADE
                     )`;
+            //cascade help in maintain consistency bcz when i delete user it also delete realted table to user in other table .like akriti name delted the her address will also be deleted
             const res = yield client.query(query);
             console.log("created add table ", res);
         }
@@ -321,6 +328,31 @@ function insertAddTable(p0, p1, p2, p3) {
         }
     });
 }
+//transaction
+function insertUserAndAddress(username, password, firstname, lastname, state, country, pincode) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield client.query('BEGIN');
+            const query = `INSERT INTO userDetail(username,password,firstname,lastname)
+                 VALUES($1,$2,$3,$4)
+                 RETURNING id `;
+            const value = [username, password, firstname, lastname];
+            const res = yield client.query(query, value);
+            const user_id = res.rows[0].id;
+            console.log("inserted in users", res);
+            const querys = `INSERT INTO Address(user_id,state,country,pincode)VALUES($1,$2,$3,$4)`;
+            const values = [user_id, state, country, pincode];
+            const addRes = yield client.query(querys, values);
+            console.log("inserted into add: ", addRes);
+            yield client.query('COMMIT');
+        }
+        catch (error) {
+            yield client.query(`ROLLBACK`); //roll back all transcation on error
+            console.error('Error during transaction,rolled back', error);
+            throw error;
+        }
+    });
+}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         yield client.connect();
@@ -330,13 +362,17 @@ function main() {
         //    await selectTable();
         //    await insertTable("annu_irt", "123456", "ann", "tripathi");
         //    await insertTable("sakshi_irt", "123456", "sakshi", "tripathi");
-        //    await selectTable();
+        //    await selectTable();m
         //    await deleteTable(3);
-        yield selectTable();
+        //  await selectTable();
         //    await createAddTable();
         //    await insertAddTable(2,"uttarpradesh","India","273016");
         //    await insertAddTable(1,"madhyapradesh","India","273016");
+        // Transactions 
+        //  await  insertUserAndAddress("papa_irt","123456","papaji","tripathi","goa","India","273016");
+        yield selectTable();
         yield client.end();
     });
 }
 main().catch(console.error);
+//transaction run for happens multiple query together if one fails all will fail
