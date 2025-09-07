@@ -502,8 +502,8 @@ async function main(){
 //    await insertAddTable(1,"madhyapradesh","India","273016");
       
       // Transactions 
-    //  await  insertUserAndAddress("papa_irt","123456","papaji","tripathi","goa","India","273016");
-    //  await selectTable();
+     await  insertUserAndAddress("papa_irt","123456","papaji","tripathi","goa","India","273016");
+     await selectTable();
 
     //relationships
 
