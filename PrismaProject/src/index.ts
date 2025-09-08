@@ -141,6 +141,7 @@ async function getUser(username:string) {
         const res=await prisma.userji.findUnique({
             where:{
                 username
+
             }
         })
         console.log("user detail",res);
@@ -180,28 +181,116 @@ async function deleteUser(username:string) {
 
 }
 
+//inset in todo
+
+async function insertTodo(title:string,description:string,done:boolean,userId:number){
+    
+    try {
+        const res=await prisma.todo.create({
+        data:{
+            title,
+            description,
+            done,
+            userId
+        }
+    })
+    console.log("created user todo",res);
+    } catch (error) {
+        console.error("error while creating todo",error);
+    }
+}
+
+//getuser todo
+async function getUserandTodo(userId:number) {
+    
+    const res=await prisma.todo.findMany({
+        where:{
+            userId:userId
+        },
+        select:{
+            title:true,
+            description:true,
+            done:true,
+            user:{
+                select:{
+                    username:true,
+                    firstname:true,
+                    lastname:true
+                }
+            }
+
+        }
+    })
+    console.log("user&todo : ",res)
+}
+
+async function getUserandTodoss() {
+
+   try {
+    const res=await prisma.userji.findMany({
+    
+    select:{
+        username:true,
+        firstname:true,
+        lastname:true,
+        todos:{
+            select:{
+                title:true,
+                description:true,
+                done:true,
+            }
+            
+        }
+
+    }
+   })
+   console.log(res)
+   //for expanding todos section 
+   console.log(JSON.stringify(res, null, 2));
+
+   } catch (error) {
+    console.error("if error in select todoss",error)
+   }
+    
+}
+
+
+
 async function  main() {
     // await insertUser("saurabh1","123456","saurabh","tripathi");
     // await updateUser("saurabh1","saurabhji","tripathiji");
 //     await  getUser("saurabh1");
 //     await deleteUser("admin1");
 //     await getAllUser(); 
-       //insert single data in table 
-       await InsertUser("smriti1","123456","smritiji","tripathi");
-       //review data 
-       await getUser("smriti1");
-       //insert few data 
-       await InsertUser("akriti1","123456","akritiji","tripathi");
-       await InsertUser("saurabh1","123456","saurabhiji","tripathi");
-       await InsertUser("sakshi1","123456","sakshiji","tripathi");
-       //update data
-       await updateUser("sakshi1","sakshiBahini","paglu");
-       // get all data
-       await getAllUser();
-       //delete
-       await deleteUser("sakshi1");
-       //get all data
-       await getAllUser();
+
+
+//--------------------------------------------------------
+    //    //insert single data in table 
+    //    await InsertUser("smriti1","123456","smritiji","tripathi");
+    //    //review data 
+    //    await getUser("smriti1");
+    //    //insert few data 
+    //    await InsertUser("akriti1","123456","akritiji","tripathi");
+    //    await InsertUser("saurabh1","123456","saurabhiji","tripathi");
+    //    await InsertUser("sakshi1","123456","sakshiji","tripathi");
+    //    //update data
+    //    await updateUser("sakshi1","sakshiBahini","paglu");
+    //    // get all data
+    //    await getAllUser();
+    //    //delete
+    //    await deleteUser("sakshi1");
+    //    //get all data
+    //    await getAllUser();
+
+    //    await insertTodo("Maths","calculas ",true,1);
+    //    await insertTodo("physics","thermo ",true,2);
+    //    await insertTodo("chem","thermodynamics ",false,3);
+    // await getUserandTodo(1);
+    //using first user then todo 
+    await getUserandTodoss();
+
+       //realtionship cd.. 
+
 }
 
 main()
