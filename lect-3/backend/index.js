@@ -26,7 +26,7 @@ app.get('/jokes', (req, res) => {
         {
             id: 3,
             title: 'Yet another joke',
-            content: "This is yet another joke"
+            content: "This is yet another lame  joke"
         },
         {
             id: 4,
