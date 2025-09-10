@@ -30,6 +30,7 @@
 // }
 
 // createUsersTable();
+//create to handle error
 
 //psql install ho to dekh skte ho table
 //   \dt  se
